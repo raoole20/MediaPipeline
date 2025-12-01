@@ -1,0 +1,13 @@
+{
+  "material-icon-theme.files.associations": {
+    "*.service.ts": "nest",
+    "*.module.ts": "nest",
+    "*.controller.ts": "nest",
+    "*.guard.ts": "nest",
+    "*.decorator.ts": "nest",
+    "*.filter.ts": "nest",
+    "*.pipe.ts": "nest",
+    "*.middleware.ts": "nest",
+    "*.gateway.ts": "nest"
+  }
+}
