@@ -1,0 +1,15 @@
+meta {
+  name: upload file
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{url}}/api/files
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  file: @file(C:\Users\raool\Downloads\WhatsApp Image 2025-11-28 at 9.46.13 PM.jpeg)
+}
