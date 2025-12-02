@@ -6,7 +6,17 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+  // Crear aplicación HTTP normal
+  const app = await NestFactory.create(AppModule);
+
+  // Habilitar CORS para permitir peticiones desde el navegador
+  app.enableCors();
+
+  // Configurar prefijo global
+  app.setGlobalPrefix('api');
+
+  // Conectar microservicio RabbitMQ como híbrido
+  app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
       urls: ['amqp://guest:guest@localhost:5672'],
@@ -17,7 +27,6 @@ async function bootstrap() {
     },
   });
 
-
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -25,9 +34,13 @@ async function bootstrap() {
     })
   );
 
-  await app.listen()
-    .then(() => console.log(`Server running on port ${process.env.PORT}`))
-    .catch((error) => console.error(error));
+  // Iniciar todos los microservicios conectados
+  await app.startAllMicroservices();
+
+  // Iniciar servidor HTTP
+  const port = process.env.PORT || 4000;
+  await app.listen(port);
+  console.log(`Server running on port ${port}`);
 }
 
 bootstrap();
