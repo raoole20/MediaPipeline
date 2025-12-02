@@ -1,22 +1,17 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
 import { WorkerService } from './worker.service';
 import { EventPattern, Payload } from '@nestjs/microservices';
+import type { FileMessageDto } from './dto/file-message.dto';
 
 @Controller()
 export class WorkerController {
+  private readonly logger = new Logger(WorkerController.name);
   constructor(private readonly workerService: WorkerService) { }
 
-  @EventPattern('process_image') // debe conincidir con el emit del servicio a
-  async getHello(@Payload() data: any) {
-    console.log(data);
+  @EventPattern('process_image')
+  async getHello(@Payload() data: FileMessageDto) {
+    this.logger.log('Desde micro servicio: ' + data.originalname);
 
-    // logica aqui:
-    // 1. recibir la imagen
-    // 2. rediemnsionar
-    // 2. procesar la imagen
-    // 3. guardar la imagen
-    // 4. enviar la imagen al servicio de storage
-    // 5. enviar la imagen al servicio de catalogo
-    return this.workerService.getHello();
+    return this.workerService.fileManager(data);
   }
 }

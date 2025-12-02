@@ -7,6 +7,7 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
   Inject,
+  Logger,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
@@ -14,6 +15,8 @@ import { ClientProxy } from '@nestjs/microservices';
 
 @Controller('files')
 export class FilesController {
+  private readonly logger = new Logger(FilesController.name);
+
   constructor(
     private readonly filesService: FilesService,
     @Inject('IMAGE_SERVICE')
@@ -33,8 +36,17 @@ export class FilesController {
     )
     file: Express.Multer.File,
   ) {
+    this.logger.log('File uploaded: ' + file.originalname);
 
-    this.client.emit('process_image', file);
+    // Convertir buffer a base64 para enviar por RabbitMQ
+    const fileData = {
+      originalname: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size,
+      buffer: file.buffer.toString('base64'), // Convertir a base64
+    };
+
+    this.client.emit('process_image', fileData);
 
     return this.filesService.create(file);
   }
