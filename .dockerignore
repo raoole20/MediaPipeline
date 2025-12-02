@@ -1,0 +1,48 @@
+# Dependencies
+**/node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log*
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Build production
+**/dist
+**/build
+
+# Environment variables
+.env
+.env.*
+
+# IDEs and editors
+.idea
+.vscode
+*.swp
+*.swo
+*.iml
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+docker-compose.*.yml
+
+# Testing and Coverage
+**/coverage
+**/test
+**/spec
+
+# Documentation and others
+docs
+README.md
+LICENSE
+*.md
+*.txt
+
+# Local data
+db
+**/uploads

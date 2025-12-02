@@ -12,6 +12,9 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - ./db/postgres_data:/var/lib/postgresql/data
+    networks:
+      - image-manager
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -20,3 +23,20 @@ services:
       - "${RABBITMQ_MANAGEMENT_PORT}:15672"
     volumes:
       - ./db/rabbitmq_data:/var/lib/rabbitmq/mnesia
+    networks:
+      - image-manager
+
+  image-manager:
+    image: image-manager
+    container_name: image-manager
+    ports:
+      - "${PORT}:4000"
+    volumes:
+      - ./db/image-manager_data:/var/lib/image-manager
+    networks:
+      - image-manager
+
+networks:
+  image-manager:
+    driver: bridge
+
