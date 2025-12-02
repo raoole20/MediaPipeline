@@ -6,13 +6,19 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
+  Inject,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from './files.service';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Controller('files')
 export class FilesController {
-  constructor(private readonly filesService: FilesService) { }
+  constructor(
+    private readonly filesService: FilesService,
+    @Inject('IMAGE_SERVICE')
+    private readonly client: ClientProxy,
+  ) { }
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
@@ -27,6 +33,9 @@ export class FilesController {
     )
     file: Express.Multer.File,
   ) {
+
+    this.client.emit('process_image', file);
+
     return this.filesService.create(file);
   }
 }
