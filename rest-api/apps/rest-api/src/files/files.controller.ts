@@ -21,7 +21,7 @@ export class FilesController {
     private readonly filesService: FilesService,
     @Inject('IMAGE_SERVICE')
     private readonly client: ClientProxy,
-  ) { }
+  ) {}
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
@@ -38,7 +38,6 @@ export class FilesController {
   ) {
     this.logger.log('File uploaded: ' + file.originalname);
 
-    // Convertir buffer a base64 para enviar por RabbitMQ
     const fileData = {
       originalname: file.originalname,
       mimetype: file.mimetype,
@@ -46,8 +45,23 @@ export class FilesController {
       buffer: file.buffer.toString('base64'), // Convertir a base64
     };
 
+    // este emmit genra un id?
+    // all estar en el servicio de colas? como puedo darle seguimiento y asegurarme que
+    // realmente lo este cargando
+    // por streming? o en trozos?
+    // por ahora lo mantendre simple
+    // TODO: recibir respuesta clara del serivcio y en el front mostrar que se cargo
+    // TOOD: luego implementar un sistema de tracking del proceso
     this.client.emit('process_image', fileData);
+    this.filesService.create(file);
 
-    return this.filesService.create(file);
+    return {
+      message: 'File uploaded successfully',
+      data: {
+        originalname: file.originalname,
+        mimetype: file.mimetype,
+        size: file.size,
+      },
+    };
   }
 }
