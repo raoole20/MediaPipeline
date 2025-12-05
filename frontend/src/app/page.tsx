@@ -9,6 +9,8 @@ import { FilesSection } from "./components/FilesSection";
 import { PreviewCard } from "./components/PreviewCard";
 import { Sidebar } from "./components/Sidebar";
 import { MockFile, NavSection, QuickFilter } from "./components/types";
+import { UploadingFile, UploadProgress } from "./components/UploadProgress";
+import { uploadFile } from "./server";
 
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
@@ -50,11 +52,12 @@ const MOCK_FILES: MockFile[] = [
 export default function Home() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewName, setPreviewName] = useState<string | null>(null);
+  const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const inputId = "upload-input";
 
   const handleFileSelection = useCallback(
-    (files: FileList | null) => {
+    async (files: FileList | null) => {
       if (!files?.length) {
         return;
       }
@@ -67,6 +70,28 @@ export default function Home() {
       const nextUrl = URL.createObjectURL(file);
       setPreviewUrl(nextUrl);
       setPreviewName(file.name);
+
+      const uploadId = crypto.randomUUID();
+      setUploadingFiles((prev) => [
+        ...prev,
+        { id: uploadId, name: file.name, status: "uploading" },
+      ]);
+
+      try {
+        await uploadFile(file);
+        setUploadingFiles((prev) =>
+          prev.map((f) => (f.id === uploadId ? { ...f, status: "success" } : f))
+        );
+      } catch (error) {
+        setUploadingFiles((prev) =>
+          prev.map((f) => (f.id === uploadId ? { ...f, status: "error" } : f))
+        );
+      }
+
+      // Remove from list after delay
+      setTimeout(() => {
+        setUploadingFiles((prev) => prev.filter((f) => f.id !== uploadId));
+      }, 5000);
     },
     [previewUrl]
   );
@@ -118,6 +143,7 @@ export default function Home() {
           <FilesSection files={MOCK_FILES} />
         </main>
       </div>
+      <UploadProgress files={uploadingFiles} />
     </div>
   );
 }

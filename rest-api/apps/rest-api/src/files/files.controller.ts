@@ -57,11 +57,9 @@ export class FilesController {
 
     return {
       message: 'File uploaded successfully',
-      data: {
-        originalname: file.originalname,
-        mimetype: file.mimetype,
-        size: file.size,
-      },
+      originalname: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size,
     };
   }
 }
