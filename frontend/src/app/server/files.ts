@@ -1,15 +1,30 @@
-'use server';
+"use server";
 
 /**
- * 
+ *
  * @param file Realmente es un file? o un blob? buena pregunta
  */
 export async function uploadFile(file: File) {
-    // Aquí puedes implementar la lógica para manejar el archivo en el servidor
-    // Por ejemplo, guardarlo en una base de datos o en un sistema de archivos
-    fetch(`${process.env.API_URL || ''}/api/upload`, {
-        method: 'POST',
-        body: file,
+  const endpoint = new URL("/api/upload", process.env.API_URL || "");
+
+  try {
+    const response = await fetch(endpoint.toString(), {
+      method: "POST",
+      body: file,
     });
-    console.log(`Archivo recibido: ${file.name}, tamaño: ${file.size} bytes`);
+
+    const result = await response.json();
+
+    return {
+        success: response.ok,
+        message: result.message || (response.ok ? "Upload successful" : "Upload failed"),
+        data: result.data || null,
+    }
+  } catch (error) {
+    return {
+        success: false,
+        message: "Network error",
+        data: null,
+    }
+  }
 }
