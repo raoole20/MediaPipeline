@@ -117,14 +117,14 @@ export default function Home() {
   }, []);
 
   return (
-    <div className={`${spaceGrotesk.className} min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-900`}>
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-10 lg:flex-row lg:px-12">
+    <div className={`${spaceGrotesk.className} min-h-screen from-slate-950 via-slate-900 to-slate-800 text-slate-900`}>
+      <div className="mx-auto flex w-full  flex-col gap-6 px-6 py-10 lg:flex-row lg:px-12">
         <Sidebar navSections={NAV_SECTIONS} onUploadRequest={triggerFileDialog} />
 
         <main className="flex w-full flex-1 flex-col gap-8 rounded-3xl bg-white/90 p-8 shadow-2xl backdrop-blur">
           <AppHeader onUploadRequest={triggerFileDialog} />
 
-          <section className="flex flex-col gap-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 p-6 text-white">
+          <section className="flex flex-col gap-6 rounded-3xl from-slate-900 via-slate-800 to-slate-700 p-6 text-white">
             <DropHero filters={QUICK_FILTERS} />
             <DropArea onFilesSelected={handleFileSelection} inputId={inputId} />
 
